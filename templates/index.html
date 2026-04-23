@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Health Risk Analysis App</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+  <main class="page">
+    <section class="hero">
+      <div class="hero-text">
+        <span class="badge">Health Screening App</span>
+        <h1>Health Risk Analysis Model</h1>
+        <p>
+          A responsive web app that estimates health risk from key indicators and returns
+          a clear risk score, level, and screening summary.
+        </p>
+      </div>
+      <div class="hero-card">
+        <div class="metric">
+          <span>Use case</span>
+          <strong>Community screening, NGO outreach, health education</strong>
+        </div>
+        <div class="metric">
+          <span>Powered by</span>
+          <strong>Flask + JavaScript + Machine Learning</strong>
+        </div>
+      </div>
+    </section>
+
+    <section class="grid">
+      <form id="riskForm" class="card form-card">
+        <h2>Enter Health Information</h2>
+        <p class="muted">Fill in the fields below to estimate risk.</p>
+
+        <div class="form-grid">
+          <label><span>Age</span><input type="number" id="age" min="18" max="100" required></label>
+          <label><span>BMI</span><input type="number" id="bmi" min="10" max="60" step="0.1" required></label>
+          <label><span>Systolic BP</span><input type="number" id="systolic_bp" min="70" max="250" required></label>
+          <label><span>Diastolic BP</span><input type="number" id="diastolic_bp" min="40" max="150" required></label>
+          <label><span>Blood Sugar</span><input type="number" id="blood_sugar" min="50" max="400" required></label>
+          <label><span>Cholesterol</span><input type="number" id="cholesterol" min="80" max="400" required></label>
+          <label><span>Activity Level (days/week)</span><input type="number" id="activity_level" min="0" max="7" required></label>
+          <label>
+            <span>Smoking</span>
+            <select id="smoking" required>
+              <option value="">Select</option>
+              <option value="0">No</option>
+              <option value="1">Yes</option>
+            </select>
+          </label>
+          <label>
+            <span>Family History</span>
+            <select id="family_history" required>
+              <option value="">Select</option>
+              <option value="0">No</option>
+              <option value="1">Yes</option>
+            </select>
+          </label>
+        </div>
+
+        <div class="button-row">
+          <button type="submit" id="predictBtn">Analyze Risk</button>
+          <button type="button" id="resetBtn" class="secondary">Reset</button>
+        </div>
+
+        <p class="disclaimer">This is a screening support tool and not a medical diagnosis.</p>
+      </form>
+
+      <section class="card result-card">
+        <h2>Result</h2>
+        <div id="resultState" class="empty-state">
+          Submit the form to see the health risk result.
+        </div>
+
+        <div id="resultBox" class="hidden">
+          <div class="result-top">
+            <div>
+              <p class="label">Risk Level</p>
+              <h3 id="riskLevel">-</h3>
+            </div>
+            <div class="score-ring">
+              <span id="riskScore">0%</span>
+            </div>
+          </div>
+
+          <div class="summary-box">
+            <p class="label">Summary</p>
+            <p id="summaryText"></p>
+          </div>
+
+          <div class="notes-box">
+            <p class="label">Notes</p>
+            <ul id="notesList"></ul>
+          </div>
+        </div>
+
+        <div id="errorBox" class="error hidden"></div>
+      </section>
+    </section>
+  </main>
+
+  <script src="{{ url_for('static', filename='app.js') }}"></script>
+</body>
+</html>
