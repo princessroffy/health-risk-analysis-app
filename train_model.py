@@ -8,6 +8,10 @@ import joblib
 
 np.random.seed(42)
 
+BASE_DIR = Path(__file__).resolve().parent
+DATA_DIR = BASE_DIR / "data"
+MODELS_DIR = BASE_DIR / "models"
+
 n = 1200
 age = np.random.randint(18, 81, n)
 bmi = np.round(np.random.normal(27, 5, n).clip(15, 45), 1)
@@ -47,10 +51,10 @@ df = pd.DataFrame({
     "risk": risk
 })
 
-Path("data").mkdir(exist_ok=True)
-Path("models").mkdir(exist_ok=True)
+DATA_DIR.mkdir(exist_ok=True)
+MODELS_DIR.mkdir(exist_ok=True)
 
-df.to_csv("data/health_risk_dataset.csv", index=False)
+df.to_csv(DATA_DIR / "health_risk_dataset.csv", index=False)
 
 X = df.drop(columns=["risk"])
 y = df["risk"]
@@ -65,8 +69,8 @@ X_train_scaled = scaler.fit_transform(X_train)
 model = LogisticRegression(max_iter=1000)
 model.fit(X_train_scaled, y_train)
 
-joblib.dump(model, "models/health_risk_model.pkl")
-joblib.dump(scaler, "models/scaler.pkl")
+joblib.dump(model, MODELS_DIR / "health_risk_model.pkl")
+joblib.dump(scaler, MODELS_DIR / "scaler.pkl")
 
-print("Training complete.")
+print("Synthetic demo training complete.")
 print("Files saved successfully.")

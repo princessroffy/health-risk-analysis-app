@@ -1,12 +1,14 @@
+import os
 from flask import Flask, render_template, request, jsonify
 import joblib
-import numpy as np
+import pandas as pd
 from pathlib import Path
 
 app = Flask(__name__)
 
-MODEL_PATH = Path("models/health_risk_model.pkl")
-SCALER_PATH = Path("models/scaler.pkl")
+BASE_DIR = Path(__file__).resolve().parent
+MODEL_PATH = BASE_DIR / "models" / "health_risk_model.pkl"
+SCALER_PATH = BASE_DIR / "models" / "scaler.pkl"
 
 model = joblib.load(MODEL_PATH)
 scaler = joblib.load(SCALER_PATH)
@@ -40,7 +42,9 @@ def home():
 @app.route("/api/predict", methods=["POST"])
 def predict():
     try:
-        payload = request.get_json(force=True)
+        payload = request.get_json(silent=True)
+        if not isinstance(payload, dict):
+            return jsonify({"error": "Request body must be a JSON object."}), 400
 
         values = []
         missing = []
@@ -71,7 +75,7 @@ def predict():
             if not valid:
                 return jsonify({"error": message}), 400
 
-        row = np.array([values], dtype=float)
+        row = pd.DataFrame([values], columns=FEATURES, dtype=float)
         row_scaled = scaler.transform(row)
         probability = float(model.predict_proba(row_scaled)[0][1])
         prediction = int(probability >= 0.5)
@@ -86,18 +90,20 @@ def predict():
                 else "Lower likelihood of immediate health risk based on the entered values."
             ),
             "notes": [
-                "This tool is for screening support only and not a medical diagnosis.",
-                "Use real patient or survey data to retrain the model before production deployment.",
-                "Consider adding user authentication, database logging, and audit trails for real deployments."
+                "This demo tool is not a medical diagnosis or clinical decision system.",
+                "The included model is trained on synthetic data and is not clinically validated.",
+                "Retrain and validate with appropriate real-world data before any production health use."
             ]
         }
         return jsonify(response)
 
     except ValueError:
         return jsonify({"error": "All inputs must be numeric."}), 400
-    except Exception as exc:
-        return jsonify({"error": f"Unexpected server error: {str(exc)}"}), 500
+    except Exception:
+        app.logger.exception("Prediction failed")
+        return jsonify({"error": "Unexpected server error."}), 500
 
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    debug = os.getenv("FLASK_DEBUG", "").lower() in {"1", "true", "yes"}
+    app.run(debug=debug)
