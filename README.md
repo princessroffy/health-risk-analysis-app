@@ -96,8 +96,4 @@ The model outputs a probability-based classification:
 
 ---
 
-## ⚙️ How to Run
-
-```bash
-pip install -r requirements.txt
-streamlit run app.py<img width="1220" height="712" alt="Screenshot 2026-05-04 at 11 41 11" src="https://github.com/user-attachments/assets/68d93383-b627-4331-bddb-a33dff715f63" />
+<img width="1220" height="712" alt="Screenshot 2026-05-04 at 11 41 11" src="https://github.com/user-attachments/assets/68d93383-b627-4331-bddb-a33dff715f63" />
